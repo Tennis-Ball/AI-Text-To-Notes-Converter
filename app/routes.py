@@ -2,10 +2,12 @@ from app import app
 from flask import render_template, request
 import openai
 from transformers import GPT2Tokenizer
+import os
 
-with open("OPENAI_API_KEY.txt", "r") as k:
-    openai.api_key = k.readline()
-    k.close()
+# with open("OPENAI_API_KEY.txt", "r") as k:
+#     openai.api_key = k.readline()
+#     k.close()
+openai.api_key = os.environ["OPENAI_API_KEY"]
 
 extra_markers = ["AP", "TIP", "NOTE", "AP®"]
 punctuation = [".", "!", "?"]
