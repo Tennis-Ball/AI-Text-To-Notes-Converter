@@ -20,7 +20,7 @@ def home():
     in_extra = False
     raw_notes = []
 
-    input = None
+    input = ""
 
     if request.method == "POST":
         input = request.form["text_in"]
