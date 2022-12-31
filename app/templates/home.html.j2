@@ -1,11 +1,15 @@
 <html>
-	<body style="background: #6f7050;">
-		<form action="/" method="post">
-			<textarea id="text_in" name="text_in" placeholder="Text In" style="width: 50%; height: 25%;">{{input}}</textarea>
-			<br>
-			<input type="submit" formmethod="post">
-		</form>
-		<br><br>
-		<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 50%; height: 60%;">{{output}}</textarea>
+	<body style="background: #6f7050; text-align: center; padding: 2%">
+		<div style="display: inline-block; width: 49%">
+			<h1 style="font-family: Lucida Console, Courier New, monospace;">Text to Notes Converter (BETA)</h1>
+			<form action="/" method="post">
+				<textarea id="text_in" name="text_in" placeholder="Paste from Textbook" style="width: 98%; height: 90%;">{{input}}</textarea>
+				<br>
+				<input type="submit" formmethod="post">
+			</form>
+		</div>
+		<div style="display: inline-block; width: 49%">
+			<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 98%; height: 95%;">{{output}}</textarea>
+		</div>
 	</body>
 </html>
