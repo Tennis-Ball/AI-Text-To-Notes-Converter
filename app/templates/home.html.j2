@@ -1,7 +1,11 @@
 <html>
 	<body style="background: #6f7050;">
-		<textarea id="text_in" placeholder="Text In" style="width: 50%; height: 25%;"></textarea>
+		<form action="/" method="post">
+			<textarea id="text_in" name="text_in" placeholder="Text In" style="width: 50%; height: 25%;">{{input}}</textarea>
+			<br>
+			<input type="submit" formmethod="post">
+		</form>
 		<br><br>
-		<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 50%; height: 25%;"></textarea>
+		<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 50%; height: 60%;">{{output}}</textarea>
 	</body>
 </html>
