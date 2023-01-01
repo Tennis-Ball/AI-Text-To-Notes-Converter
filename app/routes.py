@@ -4,10 +4,10 @@ import openai
 from transformers import GPT2Tokenizer
 import os
 
-#with open("OPENAI_API_KEY.txt", "r") as k:
-#    openai.api_key = k.readline()
-#    k.close()
-openai.api_key = os.environ["OPENAI_API_KEY"]
+with open("OPENAI_API_KEY.txt", "r") as k:
+   openai.api_key = k.readline()
+   k.close()
+# openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
@@ -57,9 +57,11 @@ def home():
 
             prompt = f'Summarize the following text: "{raw_notes[topic][1]}"'
             number_of_tokens = len(tokenizer(prompt)['input_ids'])
+            print(number_of_tokens)
             if number_of_tokens > 4000:
-                flash(f"Paragraph: {raw_notes[topic][1]} exceeds ~3000 word limit. Consider consolidating or splitting this piece of text.", "danger")
-            
+                flash(f"{raw_notes[topic][1]}", "danger")
+                break
+
             completion = openai.Completion.create(engine="text-davinci-003", max_tokens=4096-number_of_tokens, prompt=prompt)
             for point in completion.choices[0].text.strip("\n. ").split(". "):
                 notes += f"        * {point}\n"
