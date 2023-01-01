@@ -4,10 +4,10 @@ import openai
 from transformers import GPT2Tokenizer
 import os
 
-with open("OPENAI_API_KEY.txt", "r") as k:
-    openai.api_key = k.readline()
-    k.close()
-# openai.api_key = os.environ["OPENAI_API_KEY"]
+#with open("OPENAI_API_KEY.txt", "r") as k:
+#    openai.api_key = k.readline()
+#    k.close()
+openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
