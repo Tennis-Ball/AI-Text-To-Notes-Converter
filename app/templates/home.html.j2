@@ -1,15 +1,40 @@
 <html>
-	<body style="background: #6f7050; text-align: center; padding: 2%">
-		<div style="display: inline-block; width: 49%">
-			<h1 style="font-family: Lucida Console, Courier New, monospace;">Text to Notes Converter (BETA)</h1>
-			<form action="/" method="post">
-				<textarea id="text_in" name="text_in" placeholder="Paste from Textbook (~3000 word limit)" style="width: 98%; height: 90%;">{{input}}</textarea>
-				<br>
-				<input type="submit" formmethod="post">
-			</form>
+	<head>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+		<script src="{{ url_for('static',filename='js/main.js') }}"></script>
+	</head>
+
+	<body style="background: #8d8d8d; padding: 2%">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+        	{% if messages %}
+        		{% for category, message in messages %}
+					<div class="alert alert-danger alert-dismissible fade show">
+    					<div style="font-weight: 200;">
+        					<i class="bi bi-exclamation-triangle-fill" style="margin-right: 10px;"></i>
+        					{{message}}
+    					</div> 
+    					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+        		{% endfor %}
+      		{% endif %}
+    	{% endwith %}
+		
+		<div style="position: absolute; margin-left: 90%;">
+			<button type="button" onclick="location.href='/about'">About</button>
 		</div>
-		<div style="display: inline-block; width: 49%">
-			<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 98%; height: 95%;">{{output}}</textarea>
-		</div>
+		
+		<div style="text-align: center;">
+			<div style="display: inline-block; width: 49%">
+				<h1 style="font-family: Lucida Console, Courier New, monospace;">Text to Notes Converter (BETA)</h1>
+				<form action="/" method="post">
+					<textarea id="text_in" name="text_in" placeholder="Paste from Textbook" style="width: 98%; height: 85%;">{{input}}</textarea>
+					<br>
+					<input type="submit" formmethod="post">
+				</form>
+			</div>
+			<div style="display: inline-block; width: 49%">
+				<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 98%; height: 90%;">{{output}}</textarea>
+			</div>
+		</div
 	</body>
 </html>

@@ -1,0 +1,49 @@
+<html>
+	<head>
+
+	</head>
+
+	<body style="background: #ababab; padding: 3%; font-family: Lucida Console, Courier New, monospace;">
+		<h1>About This Project</h1>
+		<br>
+		<p>
+			This website and the technology behind it was developed by Boston Latin School
+			student Mason Choi in an attempt to streamline his AP World History notetaking
+			process. It has been proven successful on the Strayer AP World History: Modern
+			textbook, but is yet to be tested on other textbooks in varying subject matter.
+		</p>
+		<br>
+		<p>
+			The technology at the heart of this project is Python code which processes text
+			input into a feedable form for OpenAI's text-davinci-003 model from the GPT-3
+			family via API. This crude website serves as an interface between the technology
+			and its users, written with the Flask framework.
+		</p>
+		<br>
+		<p>
+			To use, copy text from any source, preferably from a published textbook, into
+			the left-hand textarea and submit. The process of conversion is indicated by
+			the long reloading of the page, a time at which no further input should be
+			applied to the site. Depending on the length of input, converted notes form
+			should appear in the right-hand textarea in a timely manner. Issues can be
+			reported directly on this project's
+			<a href="https://github.com/Tennis-Ball/OpenAI-Text-To-Notes-Converter">
+			Github page</a>.
+		</p>
+		<br>
+		<p>
+			Due to OpenAI's current restrictions on its API, queries for the
+			text-davincii-003 model are limited to 4096 tokens, or about 3000 words. Due
+			to the nature of this technology, this means that individual paragraphs must
+			be limited to under 3000 words. In addition, use of the API costs real money,
+			meaning that with each conversion my wallet loses weight. While the Beta
+			release offers the tool free of charge and will remain this way for the
+			forseeable future, I would appreciate it if spamming, overuse, and abuse are
+			brought to a minimum.
+		</p>
+		<br>
+		<div style="position: absolute; margin-left: 90%;">
+			<button type="button" onclick="location.href='/'">Back</button>
+		</div>
+	</body>
+</html>

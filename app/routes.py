@@ -1,14 +1,16 @@
 from app import app
-from flask import render_template, request
+from flask import render_template, request, flash
 import openai
 from transformers import GPT2Tokenizer
 import os
 
-# with open("OPENAI_API_KEY.txt", "r") as k:
-#     openai.api_key = k.readline()
-#     k.close()
-openai.api_key = os.environ["OPENAI_API_KEY"]
+with open("OPENAI_API_KEY.txt", "r") as k:
+    openai.api_key = k.readline()
+    k.close()
+# openai.api_key = os.environ["OPENAI_API_KEY"]
 
+
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 extra_markers = ["AP", "TIP", "NOTE", "AP®"]
 punctuation = [".", "!", "?"]
 
@@ -25,6 +27,7 @@ def home():
     if request.method == "POST":
         input = request.form["text_in"]
         lines = [line.strip() for line in input.split("\n") if len(line) > 1]  # TODO: failure point
+       
         for curline in lines:
             not_sentence = curline[-1] not in punctuation
             is_short = len(curline.split()) < 10
@@ -44,14 +47,19 @@ def home():
                     extra_notes += f'        * {curline.strip(". ")}\n'
                     in_extra = False
                 else:
-                    raw_notes[-1][1] += f"{curline}\n"
+                    if len(raw_notes) == 0:
+                        raw_notes.append([curline, ""])
+                    else:
+                        raw_notes[-1][1] += f"{curline}\n"
 
         for topic in range(len(raw_notes)):
             notes += f"\n* {raw_notes[topic][0]}\n"
 
             prompt = f'Summarize the following text: "{raw_notes[topic][1]}"'
-            tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
             number_of_tokens = len(tokenizer(prompt)['input_ids'])
+            if number_of_tokens > 4000:
+                flash(f"Paragraph: {raw_notes[topic][1]} exceeds ~3000 word limit. Consider consolidating or splitting this piece of text.", "danger")
+            
             completion = openai.Completion.create(engine="text-davinci-003", max_tokens=4096-number_of_tokens, prompt=prompt)
             for point in completion.choices[0].text.strip("\n. ").split(". "):
                 notes += f"        * {point}\n"
@@ -60,3 +68,8 @@ def home():
         print(notes)
 
     return render_template("home.html.j2", input=input, output=notes)
+
+@app.route("/about", methods=["GET"])
+def about():
+    return render_template("about.html.j2")
+
