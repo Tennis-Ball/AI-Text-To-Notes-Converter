@@ -1,5 +1,7 @@
+# TODO: Identify AP tips and notes, switch for Strayer vs arbitrary textbook
+
 from app import app
-from flask import render_template, request, flash
+from flask import render_template, request, flash, redirect
 import openai
 from transformers import GPT2Tokenizer
 import os
@@ -14,6 +16,12 @@ tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 extra_markers = ["AP", "TIP", "NOTE", "AP®"]
 punctuation = [".", "!", "?"]
 
+@app.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        code = 301
+        return redirect(url, code=code)
 
 @app.route("/", methods=["GET", "POST"])
 def home():
