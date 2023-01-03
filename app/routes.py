@@ -67,7 +67,7 @@ def home():
                 notes += f"        * {point}\n"
 
         notes += "\n" + extra_notes
-        print(notes)
+        notes = notes.strip('" ')
 
     return render_template("home.html.j2", input=input, output=notes)
 
