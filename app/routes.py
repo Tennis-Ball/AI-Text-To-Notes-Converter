@@ -45,14 +45,14 @@ def home():
 
             if not_sentence and is_short and is_heading:
                 if extra:
-                    extra_notes += f'* {curline.strip(". ")}\n'
+                    extra_notes += f'• {curline.strip(". ")}\n'
                     in_extra = True
                 else:
                     raw_notes.append([curline, ""])
                     in_extra = False
             else:
                 if in_extra:
-                    extra_notes += f'        * {curline.strip(". ")}\n'
+                    extra_notes += f'        • {curline.strip(". ")}\n'
                     in_extra = False
                 else:
                     if len(raw_notes) == 0:
@@ -61,7 +61,7 @@ def home():
                         raw_notes[-1][1] += f"{curline}\n"
 
         for topic in range(len(raw_notes)):
-            notes += f"\n* {raw_notes[topic][0]}\n"
+            notes += f"\n• {raw_notes[topic][0]}\n"
 
             prompt = f'Summarize the following text: "{raw_notes[topic][1]}"'
             number_of_tokens = len(tokenizer(prompt)['input_ids'])
@@ -77,7 +77,7 @@ def home():
                 break
 
             for point in completion.choices[0].text.strip("\n. ").split(". "):
-                notes += f"        * {point}\n"
+                notes += f"        • {point}\n"
 
         notes += "\n\nAP Notes and Tips:\n" + extra_notes
         notes = notes.strip('" ')
