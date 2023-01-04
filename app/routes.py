@@ -1,4 +1,4 @@
-# TODO: Identify AP tips and notes, switch for Strayer vs arbitrary textbook
+# TODO: Settings for textbook and formatting, bullets instead of asterisks
 
 from app import app
 from flask import render_template, request, flash, redirect
@@ -13,7 +13,7 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-extra_markers = ["AP", "TIP", "NOTE", "AP®"]
+extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", " Causation", " Comparison"]
 punctuation = [".", "!", "?"]
 
 @app.before_request
@@ -41,7 +41,7 @@ def home():
             is_short = len(curline.split()) < 10
             caps = [word[0].isupper() for word in curline.split()]
             is_heading = caps.count(True)/len(caps) > 0.5
-            extra = curline.split()[0] in extra_markers
+            extra = any([marker in curline for marker in extra_markers])
 
             if not_sentence and is_short and is_heading:
                 if extra:
@@ -70,11 +70,16 @@ def home():
                 flash(f"{raw_notes[topic][1]}", "danger")
                 break
 
-            completion = openai.Completion.create(engine="text-davinci-003", max_tokens=4096-number_of_tokens, prompt=prompt)
+            try:
+                completion = openai.Completion.create(engine="text-davinci-003", max_tokens=4096-number_of_tokens, prompt=prompt)
+            except openai.error.ServiceUnavailableError:
+                flash("OpenAI servers are currently overloaded or not ready yet. Please try again shortly.", "danger")
+                break
+
             for point in completion.choices[0].text.strip("\n. ").split(". "):
                 notes += f"        * {point}\n"
 
-        notes += "\n" + extra_notes
+        notes += "\n\nAP Notes and Tips:\n" + extra_notes
         notes = notes.strip('" ')
 
     return render_template("home.html.j2", input=input, output=notes)
@@ -82,4 +87,3 @@ def home():
 @app.route("/about", methods=["GET"])
 def about():
     return render_template("about.html.j2")
-
