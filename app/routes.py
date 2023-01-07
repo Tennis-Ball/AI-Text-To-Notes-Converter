@@ -23,66 +23,73 @@ punctuation = [".", "!", "?"]
 #         code = 301
 #         return redirect(url, code=code)
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def home():
+    return render_template("home.html.j2", input="", output="", headings=", ".join(extra_markers))
+
+@app.route("/submit", methods=["POST"])
+def submit():
     notes = ""
     extra_notes = ""
     in_extra = False
     raw_notes = []
 
-    input = ""
+    input = request.form["text_in"]
+    extra_markers = request.form["extra_markers"].split(", ")
+    lines = [line.strip() for line in input.split("\n") if len(line) > 1]  # TODO: failure point
+    
+    for curline in lines:
+        not_sentence = curline[-1] not in punctuation
+        is_short = len(curline.split()) < 10
+        caps = [word[0].isupper() for word in curline.split()]
+        is_heading = caps.count(True)/len(caps) > 0.5
+        extra = any([marker in curline for marker in extra_markers])
 
-    if request.method == "POST":
-        input = request.form["text_in"]
-        lines = [line.strip() for line in input.split("\n") if len(line) > 1]  # TODO: failure point
-       
-        for curline in lines:
-            not_sentence = curline[-1] not in punctuation
-            is_short = len(curline.split()) < 10
-            caps = [word[0].isupper() for word in curline.split()]
-            is_heading = caps.count(True)/len(caps) > 0.5
-            extra = any([marker in curline for marker in extra_markers])
-
-            if not_sentence and is_short and is_heading:
-                if extra:
-                    extra_notes += f'• {curline.strip(". ")}\n'
-                    in_extra = True
-                else:
-                    raw_notes.append([curline, ""])
-                    in_extra = False
+        if not_sentence and is_short and is_heading:
+            if extra:
+                extra_notes += f'• {curline.strip(". ")}\n'
+                in_extra = True
             else:
-                if in_extra:
-                    extra_notes += f'        • {curline.strip(". ")}\n'
-                    in_extra = False
+                raw_notes.append([curline, ""])
+                in_extra = False
+        else:
+            if in_extra:
+                extra_notes += f'        • {curline.strip(". ")}\n'
+                in_extra = False
+            else:
+                if len(raw_notes) == 0:
+                    raw_notes.append([curline, ""])
                 else:
-                    if len(raw_notes) == 0:
-                        raw_notes.append([curline, ""])
-                    else:
-                        raw_notes[-1][1] += f"{curline}\n"
+                    raw_notes[-1][1] += f"{curline}\n"
 
-        for topic in range(len(raw_notes)):
-            notes += f"\n• {raw_notes[topic][0]}\n"
+    for topic in range(len(raw_notes)):
+        notes += f"\n• {raw_notes[topic][0]}\n"
 
-            prompt = f'Summarize the following text: "{raw_notes[topic][1]}"'
-            number_of_tokens = len(tokenizer(prompt)['input_ids'])
-            print(number_of_tokens)
-            if number_of_tokens > 4000:
-                flash(f"{raw_notes[topic][1]}", "danger")
-                break
+        prompt = f'Summarize the following text: "{raw_notes[topic][1]}"'
+        number_of_tokens = len(tokenizer(prompt)['input_ids'])
+        print(number_of_tokens)
+        if number_of_tokens > 4000:
+            flash(f"{raw_notes[topic][1]}", "danger")
+            break
 
-            try:
-                completion = openai.Completion.create(engine="text-davinci-003", max_tokens=4096-number_of_tokens, prompt=prompt)
-            except openai.error.ServiceUnavailableError:
-                flash("OpenAI servers are currently overloaded or not ready yet. Please try again shortly.", "danger")
-                break
+        try:
+            completion = openai.Completion.create(engine="text-davinci-003", max_tokens=4096-number_of_tokens, prompt=prompt)
+        except openai.error.ServiceUnavailableError:
+            flash("OpenAI servers are currently overloaded or not ready yet. Please try again shortly.", "danger")
+            break
 
-            for point in completion.choices[0].text.strip("\n. ").split(". "):
-                notes += f"        • {point}\n"
+        for point in completion.choices[0].text.strip("\n. ").split(". "):
+            notes += f"        • {point}\n"
 
-        notes += "\n\nAP Notes and Tips:\n" + extra_notes
-        notes = notes.strip('" ')
+    notes += "\n\nAP Notes and Tips:\n" + extra_notes
+    notes = notes.strip('" ')
 
-    return render_template("home.html.j2", input=input, output=notes)
+    return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers))
+
+@app.route("/update_settings", methods=["POST"])
+def update_settings():
+    headings = request.form["headings"]
+    return render_template("home.html.j2", input="", output="", headings=headings)
 
 @app.route("/about", methods=["GET"])
 def about():
