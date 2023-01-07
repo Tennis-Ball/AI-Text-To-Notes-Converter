@@ -6,22 +6,22 @@ import openai
 from transformers import GPT2Tokenizer
 import os
 
-# with open("OPENAI_API_KEY.txt", "r") as k:
-#    openai.api_key = k.readline()
-#    k.close()
-openai.api_key = os.environ["OPENAI_API_KEY"]
+with open("OPENAI_API_KEY.txt", "r") as k:
+   openai.api_key = k.readline()
+   k.close()
+# openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", " Causation", " Comparison"]
 punctuation = [".", "!", "?"]
 
-@app.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        code = 301
-        return redirect(url, code=code)
+# @app.before_request
+# def before_request():
+#     if not request.is_secure:
+#         url = request.url.replace('http://', 'https://', 1)
+#         code = 301
+#         return redirect(url, code=code)
 
 @app.route("/", methods=["GET", "POST"])
 def home():

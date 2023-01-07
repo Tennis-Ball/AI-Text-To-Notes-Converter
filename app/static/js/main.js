@@ -16,4 +16,14 @@ $(document).ready(function() {
         $(document).find($("#submit")).attr("value", "Submitted!")
         console.log("Submitted!")
     });
+
+    $("#settings").click(function() {
+        $('#settings_modal').modal('show')
+    });
+    $(".close_settings").click(function() {
+        $('#settings_modal').modal('hide')
+    });
+    $("#save_settings").click(function() {
+        $('#settings_modal').modal('hide')
+    });
 });
