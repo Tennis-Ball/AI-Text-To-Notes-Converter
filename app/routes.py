@@ -1,7 +1,7 @@
-# TODO: Settings for textbook and formatting, bullets instead of asterisks
+# TODO: Add Strayer default button/switch, put submit button on save changes one, fix corner formatting
 
 from app import app
-from flask import render_template, request, flash, redirect
+from flask import render_template, request, flash, redirect, url_for
 import openai
 from transformers import GPT2Tokenizer
 import os
@@ -13,8 +13,11 @@ with open("OPENAI_API_KEY.txt", "r") as k:
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+global extra_markers
 extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", " Causation", " Comparison"]
 punctuation = [".", "!", "?"]
+notes = ""
+input = ""
 
 # @app.before_request
 # def before_request():
@@ -25,18 +28,20 @@ punctuation = [".", "!", "?"]
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("home.html.j2", input="", output="", headings=", ".join(extra_markers))
+    return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers))
 
 @app.route("/submit", methods=["POST"])
 def submit():
+    global notes
     notes = ""
     extra_notes = ""
     in_extra = False
     raw_notes = []
 
+    global input
     input = request.form["text_in"]
-    extra_markers = request.form["extra_markers"].split(", ")
     lines = [line.strip() for line in input.split("\n") if len(line) > 1]  # TODO: failure point
+    print(extra_markers)
     
     for curline in lines:
         not_sentence = curline[-1] not in punctuation
@@ -84,12 +89,14 @@ def submit():
     notes += "\n\nAP Notes and Tips:\n" + extra_notes
     notes = notes.strip('" ')
 
-    return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers))
+    # return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers))
+    return redirect(url_for("home"))
 
 @app.route("/update_settings", methods=["POST"])
 def update_settings():
-    headings = request.form["headings"]
-    return render_template("home.html.j2", input="", output="", headings=headings)
+    global extra_markers
+    extra_markers = request.form["headings"].split(", ")
+    return redirect(url_for("home"))
 
 @app.route("/about", methods=["GET"])
 def about():
