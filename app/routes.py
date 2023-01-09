@@ -4,7 +4,7 @@ from app import app
 from flask import render_template, request, flash, redirect, url_for
 import openai
 from transformers import GPT2Tokenizer
-import os
+
 
 with open("OPENAI_API_KEY.txt", "r") as k:
    openai.api_key = k.readline()
@@ -16,6 +16,8 @@ tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 global extra_markers
 extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", " Causation", " Comparison"]
 punctuation = [".", "!", "?"]
+global note_length
+note_length = "long"
 notes = ""
 input = ""
 
@@ -74,11 +76,18 @@ def submit():
         number_of_tokens = len(tokenizer(prompt)['input_ids'])
         print(number_of_tokens)
         if number_of_tokens > 4000:
-            flash(f"{raw_notes[topic][1]}", "danger")
+            flash(f"Paragraph:\n\n\"{raw_notes[topic][1]}\"\n\nexceeds ~3000 word limit. Consider consolidating or splitting this piece of text.", "danger")
             break
 
         try:
-            completion = openai.Completion.create(engine="text-davinci-003", max_tokens=4096-number_of_tokens, prompt=prompt)
+            if note_length == "short":
+                max_tokens = (4096-number_of_tokens)//3
+            elif note_length == "medium":
+                max_tokens = (4096-number_of_tokens)//3*2
+            else:
+                max_tokens = 4096-number_of_tokens
+                
+            completion = openai.Completion.create(engine="text-davinci-003", max_tokens=max_tokens, prompt=prompt)
         except openai.error.ServiceUnavailableError:
             flash("OpenAI servers are currently overloaded or not ready yet. Please try again shortly.", "danger")
             break
@@ -86,7 +95,7 @@ def submit():
         for point in completion.choices[0].text.strip("\n. ").split(". "):
             notes += f"        • {point}\n"
 
-    notes += "\n\nAP Notes and Tips:\n" + extra_notes
+    notes += "\n\nExtras:\n" + extra_notes
     notes = notes.strip('" ')
 
     # return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers))
@@ -96,6 +105,9 @@ def submit():
 def update_settings():
     global extra_markers
     extra_markers = request.form["headings"].split(", ")
+    global note_length
+    note_length = request.form["note_length"]
+
     return redirect(url_for("home"))
 
 @app.route("/about", methods=["GET"])

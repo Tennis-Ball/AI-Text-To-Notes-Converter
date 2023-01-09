@@ -18,12 +18,13 @@ $(document).ready(function() {
     });
 
     $("#settings").click(function() {
-        $('#settings_modal').modal('show')
+        $("#settings_modal").modal("show")
     });
-    $(".close_settings").click(function() {
-        $('#settings_modal').modal('hide')
+    $("#close_settings").click(function() {
+        $("#settings_modal").modal("hide")
     });
-    $("#save_settings").click(function() {
-        $('#settings_modal').modal('hide')
+
+    $("#reset_headings").click(function() {
+        $("#headings").val("AP, TIP, NOTE, AP®, Continuity and Change, Analyzing Evidence,  Causation,  Comparison")
     });
 });

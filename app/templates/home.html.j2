@@ -17,15 +17,13 @@
 		<title>Home - Text2Notes</title>
 	</head>
 
-	<body style="background: #8d8d8d; padding: 2%">
+	<body style="background: #8d8d8d; padding: 1.5%">
 		{% with messages = get_flashed_messages(with_categories=true) %}
         	{% if messages %}
         		{% for category, message in messages %}
 					<div class="alert alert-danger alert-dismissible fade show" role="alert">
     					<div>
-							<p>Paragraph:</p>
-							<p style="font-weight: 200;">"{{message}}"</p>
-							<p>exceeds ~3000 word limit. Consider consolidating or splitting this piece of text.</p>
+							<p>{{message}}</p>
     					</div> 
     					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>
@@ -50,13 +48,13 @@
 		<div style="text-align: center;">
 			<div style="display: inline-block; width: 49%">
 				<form action="/submit" method="post">
-					<textarea id="text_in" name="text_in" placeholder="Paste from Textbook" style="width: 98%; height: 85%;">{{input}}</textarea>
+					<textarea id="text_in" name="text_in" placeholder="Paste from Textbook" style="width: 98%; height: 81%;">{{input}}</textarea>
 					<br>
 					<input type="submit" formmethod="post" id="submit">
 				</form>
 			</div>
 			<div style="display: inline-block; width: 49%">
-				<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 98%; height: 85%;">{{output}}</textarea>
+				<textarea id="text_out" value="text" placeholder="Notes Output" style="width: 98%; height: 81%;">{{output}}</textarea>
 				<br>
 				<div style="padding: 1px;">
 					<input type="submit" id="copy_output" value="Copy">
@@ -70,24 +68,33 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">Settings</h5>
-						<a class="close_settings" style="color: black; cursor: pointer">
+						<a id="close_settings" style="color: black; cursor: pointer">
 							<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
 								<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
 							</svg>
 						</a>
 					</div>
 					<div class="modal-body">
-						Currently under development, Text2notes settings will enable users to specify keywords to indicate headings, change the output length, and possibly specify settings for a certain textbook from a list of supported ones.
 						<form action="/update_settings" method="post">
-							<textarea id="headings" name="headings" placeholder="Explicitly specify heading keywords" style="width: 98%; height: 40%;">{{headings}}</textarea>
-							<!-- <input type="number" id="length" name="length" placeholder="Notes length"> -->
+							<label for="headings">Specify headings to be marked as "extras":</label>
+							<textarea id="headings" name="headings" placeholder="Specify headings in a comma-space separated list" style="width: 98%; height: 40%;">{{headings}}</textarea>
+							<br><br>
+							Note length:
 							<br>
+							<input type="radio" id="short" name="note_length" value="short">
+							<label for="short">Short&nbsp;&nbsp;</label>
+							<input type="radio" id="medium" name="note_length" value="medium">
+							<label for="medium">Medium&nbsp;&nbsp;</label>
+							<input type="radio" id="long" name="note_length" value="long" checked=true>
+							<label for="long">Long</label>
+							<br><br>
+							Reset to default (Strayer AP World History: Modern):
+							<br>
+							<button id="reset_headings" type="button">Reset</button>
+							<br>
+							<hr>
 							<input type="submit" formmethod="post" id="submit">
 						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary close_settings" data-dismiss="modal">Close</button>
-						<button type="button" id="save_settings" class="btn btn-primary">Save changes</button>
 					</div>
 				</div>
 			</div>
