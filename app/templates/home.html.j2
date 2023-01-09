@@ -31,7 +31,7 @@
       		{% endif %}
     	{% endwith %}
 
-		<div style="position: absolute; margin-left: 86%;">
+		<div style="position: absolute; margin-left: 89.5%;">
 			<div style="padding: 0px 12px; display: inline">
 				<a id="settings" data-toggle="modal" data-target="#settings_modal" style="cursor: pointer">
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
@@ -81,11 +81,23 @@
 							<br><br>
 							Note length:
 							<br>
-							<input type="radio" id="short" name="note_length" value="short">
+							{% if length == "short" %}
+								<input type="radio" id="short" name="note_length" value="short" checked=true>
+							{% else %}
+								<input type="radio" id="short" name="note_length" value="short">
+							{% endif %}
 							<label for="short">Short&nbsp;&nbsp;</label>
-							<input type="radio" id="medium" name="note_length" value="medium">
+							{% if length == "medium" %}
+								<input type="radio" id="medium" name="note_length" value="medium" checked=true>
+							{% else %}
+								<input type="radio" id="medium" name="note_length" value="medium">
+							{% endif %}
 							<label for="medium">Medium&nbsp;&nbsp;</label>
-							<input type="radio" id="long" name="note_length" value="long" checked=true>
+							{% if length == "long" %}
+								<input type="radio" id="long" name="note_length" value="long" checked=true>
+							{% else %}
+								<input type="radio" id="long" name="note_length" value="long">
+							{% endif %}
 							<label for="long">Long</label>
 							<br><br>
 							Reset to default (Strayer AP World History: Modern):

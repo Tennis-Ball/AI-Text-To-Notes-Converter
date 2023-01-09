@@ -4,12 +4,13 @@ from app import app
 from flask import render_template, request, flash, redirect, url_for
 import openai
 from transformers import GPT2Tokenizer
+import os
 
 
-with open("OPENAI_API_KEY.txt", "r") as k:
-   openai.api_key = k.readline()
-   k.close()
-# openai.api_key = os.environ["OPENAI_API_KEY"]
+# with open("OPENAI_API_KEY.txt", "r") as k:
+#    openai.api_key = k.readline()
+#    k.close()
+openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
@@ -21,16 +22,16 @@ note_length = "long"
 notes = ""
 input = ""
 
-# @app.before_request
-# def before_request():
-#     if not request.is_secure:
-#         url = request.url.replace('http://', 'https://', 1)
-#         code = 301
-#         return redirect(url, code=code)
+@app.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        code = 301
+        return redirect(url, code=code)
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers))
+    return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers), length=note_length)
 
 @app.route("/submit", methods=["POST"])
 def submit():
@@ -86,7 +87,7 @@ def submit():
                 max_tokens = (4096-number_of_tokens)//3*2
             else:
                 max_tokens = 4096-number_of_tokens
-                
+
             completion = openai.Completion.create(engine="text-davinci-003", max_tokens=max_tokens, prompt=prompt)
         except openai.error.ServiceUnavailableError:
             flash("OpenAI servers are currently overloaded or not ready yet. Please try again shortly.", "danger")
