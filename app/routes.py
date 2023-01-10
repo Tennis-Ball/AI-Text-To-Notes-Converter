@@ -7,27 +7,27 @@ from transformers import GPT2Tokenizer
 import os
 
 
-# with open("OPENAI_API_KEY.txt", "r") as k:
-#    openai.api_key = k.readline()
-#    k.close()
-openai.api_key = os.environ["OPENAI_API_KEY"]
+with open("OPENAI_API_KEY.txt", "r") as k:
+   openai.api_key = k.readline()
+   k.close()
+# openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 global extra_markers
-extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", " Causation", " Comparison"]
+extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", "Causation", "Comparison", "Contextualization", "image pop up", "Map "]
 punctuation = [".", "!", "?"]
 global note_length
 note_length = "long"
 notes = ""
 input = ""
 
-@app.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        code = 301
-        return redirect(url, code=code)
+# @app.before_request
+# def before_request():
+#     if not request.is_secure:
+#         url = request.url.replace('http://', 'https://', 1)
+#         code = 301
+#         return redirect(url, code=code)
 
 @app.route("/", methods=["GET"])
 def home():
@@ -91,6 +91,9 @@ def submit():
             completion = openai.Completion.create(engine="text-davinci-003", max_tokens=max_tokens, prompt=prompt)
         except openai.error.ServiceUnavailableError:
             flash("OpenAI servers are currently overloaded or not ready yet. Please try again shortly.", "danger")
+            break
+        except openai.error.RateLimitError:
+            flash("Text length hit OpenAI's rate limit, consider reprocessing your text in chunks.", "danger")
             break
 
         for point in completion.choices[0].text.strip("\n. ").split(". "):

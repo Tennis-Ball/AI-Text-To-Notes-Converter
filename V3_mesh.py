@@ -8,11 +8,11 @@ k.close()
 
 raw_notes = []
 extra_notes = ""
-extra_markers = ["AP", "TIP", "NOTE", "AP®"]
+extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", " Causation", " Comparison"]
 in_extra = False
 punctuation = [".", "!", "?"]
 
-with open("example_passage1.txt", "r", encoding="utf-8") as f:
+with open("example_passage3.txt", "r", encoding="utf-8") as f:
     lines = [line.strip() for line in f if len(line) > 1]
 
     for curline in lines:
