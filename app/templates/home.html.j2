@@ -50,6 +50,8 @@
 				<form action="/submit" method="post">
 					<textarea id="text_in" name="text_in" placeholder="Paste from Textbook" style="width: 98%; height: 81%;">{{input}}</textarea>
 					<br>
+					<input type="hidden" value="{{headings}}" id="submit_headings" name="submit_headings">
+					<input type="hidden" value="{{length}}" id="submit_length" name="submit_length">
 					<input type="submit" formmethod="post" id="submit">
 				</form>
 			</div>
@@ -105,6 +107,8 @@
 							<button id="reset_headings" type="button">Reset</button>
 							<br>
 							<hr>
+							<input type="hidden" value="{{input}}" id="setttings_input" name="settings_input">
+							<input type="hidden" value="{{output}}" id="settings_output" name="settings_output">
 							<input type="submit" formmethod="post" id="submit">
 						</form>
 					</div>

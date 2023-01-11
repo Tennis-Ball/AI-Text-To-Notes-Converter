@@ -7,44 +7,50 @@ from transformers import GPT2Tokenizer
 import os
 
 
-with open("OPENAI_API_KEY.txt", "r") as k:
-   openai.api_key = k.readline()
-   k.close()
-# openai.api_key = os.environ["OPENAI_API_KEY"]
+# with open("OPENAI_API_KEY.txt", "r") as k:
+#    openai.api_key = k.readline()
+#    k.close()
+openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-global extra_markers
-extra_markers = ["AP", "TIP", "NOTE", "AP®", "Continuity and Change", "Analyzing Evidence", "Causation", "Comparison", "Contextualization", "image pop up", "Map "]
+extra_markers = "AP, TIP, NOTE, AP®, Continuity and Change, Analyzing Evidence, Causation, Comparison, Contextualization, image pop up, Map"
 punctuation = [".", "!", "?"]
-global note_length
 note_length = "long"
 notes = ""
 input = ""
 
-# @app.before_request
-# def before_request():
-#     if not request.is_secure:
-#         url = request.url.replace('http://', 'https://', 1)
-#         code = 301
-#         return redirect(url, code=code)
+@app.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        code = 301
+        return redirect(url, code=code)
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers), length=note_length)
+    input = request.args.get("input")
+    output = request.args.get("output")
+    headings = request.args.get("headings")
+    print(headings)
+    length = request.args.get("length")
+    if None in set([input, output, headings, length]):
+        input, output, headings, length = "", "", extra_markers, "long"
+    # return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers), length=note_length)
+    return render_template("home.html.j2", input=input, output=output, headings=headings, length=length)
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    global notes
     notes = ""
     extra_notes = ""
     in_extra = False
     raw_notes = []
 
-    global input
     input = request.form["text_in"]
-    lines = [line.strip() for line in input.split("\n") if len(line) > 1]  # TODO: failure point
+    extra_markers = request.form["submit_headings"].split(", ")
     print(extra_markers)
+    note_length = request.form["submit_length"]
+    lines = [line.strip() for line in input.split("\n") if len(line) > 1]
     
     for curline in lines:
         not_sentence = curline[-1] not in punctuation
@@ -103,16 +109,18 @@ def submit():
     notes = notes.strip('" ')
 
     # return render_template("home.html.j2", input=input, output=notes, headings=", ".join(extra_markers))
-    return redirect(url_for("home"))
+    return redirect(url_for("home", input=input, output=notes, headings=", ".join(extra_markers), length=note_length))
 
 @app.route("/update_settings", methods=["POST"])
 def update_settings():
-    global extra_markers
-    extra_markers = request.form["headings"].split(", ")
-    global note_length
+    input = request.form["settings_input"]
+    notes = request.form["settings_output"]
+    extra_markers = request.form["headings"]
     note_length = request.form["note_length"]
+    print(note_length)
 
-    return redirect(url_for("home"))
+    # return redirect(url_for("home"))
+    return redirect(url_for("home", input=input, output=notes, headings=extra_markers, length=note_length))
 
 @app.route("/about", methods=["GET"])
 def about():

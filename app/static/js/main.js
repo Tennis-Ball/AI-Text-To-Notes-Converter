@@ -25,6 +25,6 @@ $(document).ready(function() {
     });
 
     $("#reset_headings").click(function() {
-        $("#headings").val("AP, TIP, NOTE, AP®, Continuity and Change, Analyzing Evidence,  Causation,  Comparison")
+        $("#headings").val("AP, TIP, NOTE, AP®, Continuity and Change, Analyzing Evidence, Causation, Comparison, Contextualization, image pop up, Map")
     });
 });
