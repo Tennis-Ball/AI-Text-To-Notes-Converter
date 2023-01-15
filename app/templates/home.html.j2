@@ -47,11 +47,12 @@
 
 		<div style="text-align: center;">
 			<div style="display: inline-block; width: 49%">
-				<form action="/submit" method="post">
+				<form action="/" method="post">
 					<textarea id="text_in" name="text_in" placeholder="Paste from Textbook" style="width: 98%; height: 81%;">{{input}}</textarea>
 					<br>
 					<input type="hidden" value="{{headings}}" id="submit_headings" name="submit_headings">
 					<input type="hidden" value="{{length}}" id="submit_length" name="submit_length">
+					<input type="hidden" value="submit_text" class="post_type" name="post_type">
 					<input type="submit" formmethod="post" id="submit">
 				</form>
 			</div>
@@ -77,7 +78,7 @@
 						</a>
 					</div>
 					<div class="modal-body">
-						<form action="/update_settings" method="post">
+						<form action="/" method="post">
 							<label for="headings">Specify headings to be marked as "extras":</label>
 							<textarea id="headings" name="headings" placeholder="Specify headings in a comma-space separated list" style="width: 98%; height: 40%;">{{headings}}</textarea>
 							<br><br>
@@ -109,6 +110,7 @@
 							<hr>
 							<input type="hidden" value="{{input}}" id="setttings_input" name="settings_input">
 							<input type="hidden" value="{{output}}" id="settings_output" name="settings_output">
+							<input type="hidden" value="submit_settings" class="post_type" name="post_type">
 							<input type="submit" formmethod="post" id="submit">
 						</form>
 					</div>
